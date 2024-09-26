@@ -1,0 +1,60 @@
+editor: source
+
+execute:
+  cache: false
+  freeze: false
+
+project:
+  type: website
+  output-dir: docs
+  render: [index.qmd]
+
+title: "General linear models"
+author: "Daniel Vartanian"
+  # name: "Daniel Vartanian"
+  # orcid: 0000-0001-7782-759X
+  # url: https://linktr.ee/danielvartan
+  # email: danvartan@gmail.com
+  # corresponding: true
+  # affiliation:
+  #   - name: University of São Paulo
+  #   - Country: Brazil
+  #   - url: https://www.usp.br
+keyword: >
+  general linear models, multiple regression, penguins dataset,
+  palmer archipelago, palmerpenguins r package, data analysis,
+  statistical modeling, r programming, data visualization
+date: today
+date-format: "YYYY-MM-DD"
+
+website:
+  repo-url: https://github.com/danielvartan/linear-model/
+  site-url: https://danielvartan.github.io/linear-model/
+  issue-url: https://github.com/danielvartan/linear-model/issues/
+  repo-branch: main
+  repo-actions: [edit, issue]
+  search: false
+  navbar:
+    title: false
+    background: dark
+    left:
+      - icon: github
+        href: https://github.com/danielvartan/linear-model
+        aria-label: GitHub
+
+format:
+  html:
+    locale: en
+    language: en-us
+    code-tools: true
+    code-fold: show
+    code-link: true
+    df-print: paged
+    fig-align: center
+    tbl-cap-location: top
+    callout-appearance: simple
+    csl: csl/english-apa-author-date.csl
+    theme: [cosmo, scss/web.scss]
+
+google-scholar: false
+bibliography: references.bib
