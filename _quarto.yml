@@ -28,22 +28,23 @@ date: today
 date-format: "YYYY-MM-DD"
 
 website:
-  repo-url: https://github.com/danielvartan/linear-model/
-  site-url: https://danielvartan.github.io/linear-model/
-  issue-url: https://github.com/danielvartan/linear-model/issues/
+  repo-url: https://github.com/danielvartan/linear-models/
+  site-url: https://danielvartan.github.io/linear-models/
+  issue-url: https://github.com/danielvartan/linear-models/issues/
   repo-branch: main
-  repo-actions: [edit, issue]
+  repo-actions: [edit, source, issue]
   search: false
   navbar:
     title: false
     background: dark
     left:
       - icon: github
-        href: https://github.com/danielvartan/linear-model
+        href: https://github.com/danielvartan/linear-models
         aria-label: GitHub
 
 format:
   html:
+    toc: false
     locale: en
     language: en-us
     code-tools: true
