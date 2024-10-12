@@ -1769,6 +1769,18 @@
       "Repository": "RSPM",
       "Hash": "bb94fd8ee5f7f127eae2bddbff26864d"
     },
+    "multilevel": {
+      "Package": "multilevel",
+      "Version": "2.7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "MASS",
+        "R",
+        "nlme"
+      ],
+      "Hash": "d4fcd6b7e9259e3bda2eae6daf3775ee"
+    },
     "munsell": {
       "Package": "munsell",
       "Version": "0.5.1",
@@ -2225,6 +2237,19 @@
         "utils"
       ],
       "Hash": "4b9c8485b0c7eecdf0a9ba5132a45576"
+    },
+    "psychometric": {
+      "Package": "psychometric",
+      "Version": "2.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "dplyr",
+        "multilevel",
+        "nlme",
+        "purrr"
+      ],
+      "Hash": "f00c4522001412fca347b0143ed4140e"
     },
     "purrr": {
       "Package": "purrr",

@@ -24,11 +24,13 @@ Artwork by [Allison Horst](https://allisonhorst.com/).
 
 **Can bill length and bill depth alone effectively predict flipper length in [Adélie penguins](https://en.wikipedia.org/wiki/Ad%C3%A9lie_penguin)?**
 
-The goal is to test whether the variables `bill_length_mm` and `bill_depth_mm` are effective predictors of `flipper_length_mm` for the Adélie penguins. These variables are [defined](https://allisonhorst.github.io/palmerpenguins/reference/penguins.html) as follows:
+Imagine a debate between two marine biologists: one claims that bill length and depth could be used to predict flipper length, while the other disagrees.
 
-- `bill_length_mm`: Numerical value representing bill length in millimeters.
-- `bill_depth_mm`: Numerical value representing bill depth in millimeters.
-- `flipper_length_mm`: Integer value representing flipper length in millimeters
+To investigate this question, we will utilize a dataset from the [`palmerpenguins`](https://github.com/allisonhorst/palmerpenguins/) R package. The relevant variables are `bill_length_mm`,`bill_depth_mm` and `flipper_length_mm` for Adélie penguins. These variables are [defined](https://allisonhorst.github.io/palmerpenguins/reference/penguins.html) as follows:
+
+- `bill_length_mm`: Numerical value representing the bill's length in millimeters.
+- `bill_depth_mm`: Numerical value representing the bill's depth in millimeters.
+- `flipper_length_mm`: Integer value representing the flipper's length in millimeters.
 
 ::: {#fig-penguins-2}
 ![](images/culmen_depth.png){fig-align="center"width="75%"}
@@ -36,17 +38,13 @@ The goal is to test whether the variables `bill_length_mm` and `bill_depth_mm` a
 Artwork by [Allison Horst](https://allisonhorst.com/).
 :::
 
-::: {.callout-note}
-We could also include other predictors, such as `sex`, `island`, and `flipper_length_mm`, but this would complicate the visualizations. Since the primary aim here is educational, we will focus on `bill_length_mm` and `bill_depth_mm` for now.
-:::
-
 ## Hypothesis
 
-To approach this question will use Popper’s hypothetico-deductive method, originally known as the *method of conjecture and refutation* [@popper1979, p. 164]. The schema (in its simplest form) goes like this:
+To approach this question, we will apply Popper’s hypothetico-deductive method, also known as the *method of conjecture and refutation* [@popper1979, p. 164]. The basic structure of this approach can be summarized as follows:
 
-::: {.center}
 ```{mermaid}
 %%| label: fig-mermaid
+%%| fig-cap: Simplified schema of Popper’s hypothetico-deductive method.
 %%| fig-align: center
 
 flowchart LR
@@ -54,33 +52,40 @@ flowchart LR
   B --> C(EE)
   C --> D(P2)
 ```
-:::
 
 "Here $\text{P}_1$, is the **problem** from which we start, $\text{TT}$ (the ‘tentative theory’) is the imaginative conjectural solution which we first reach, for example our first **tentative interpretation**. $\text{EE}$ (‘**error- elimination**’) consists of a severe critical examination of our conjecture, our tentative interpretation: it consists, for example, of the critical use of documentary evidence and, if we have at this early stage more than one conjecture at our disposal, it will also consist of a critical discussion and comparative evaluation of the competing conjectures. $\text{P}_2$ is the problem situation as it emerges from our first critical attempt to solve our problems.
 It leads up to our second attempt (**and so on**)." [@popper1979, p. 164]
 
-Let's consider as our tentative theory the following:
+As our tentative theory or main hypothesis, we propose the following:
 
-**The predictors `bill_length_mm` and `bill_depth_mm` effectively predict `flipper_length_mm`**.
+**Bill length and bill depth can effectively predict flipper length in Adélie penguins**.
 
-We will test this by evaluating the following hypotheses:
+As a procedure method, we will employ a method **inpired** by the Neyman-Pearson approach to data testing [@neyman1928; @neyman1928a; @perezgonzalez2015], evaluating the following hypotheses:
 
 $$
 \begin{cases}
-\text{H}_{0}: \text{The predictors are not effective} \\
-\text{H}_{a}: \text{The predictors are effective}
+\text{H}_{0}: \text{Bill length and bill depth cannot effectively predict flipper length in Adélie penguins} \\
+\text{H}_{a}: \text{Bill length and bill depth can effectively predict flipper length in Adélie penguins}
 \end{cases}
 $$
 
-Let's define what we mean by *effective predictors* as follows:
+::: {.callout-warning}
+ Technically, our procedural method is not a strictly Neyman-Pearson acceptance test; we might refer to it as an improved [NHST](https://en.wikipedia.org/wiki/Statistical_hypothesis_test) (Null Hypothesis Significance Testing) approach, based on the original Neyman-Pearson ideas.
+:::
 
-- Predictors must have a statistically significant effect on the response variable.
-- The model should meet all validity assumptions.
-- The amount of variance explained by the predictors ($\text{R}^{2}_{\text{adj}}$) must be substantial, defined as greater than 0.5.
+## Methods
 
-This 50% threshold is not arbitrary. It represents the reported average level of variance explained in response variables during observational field studies in ecology, particularly when there is little to no control over factors influencing variance [@peek2003].
+To test this hypothesis, we will use a general linear model with multiple regression analysis, evaluating the relationship between multiple predictors and a response variable. Here, the response variable is `flipper_length_mm`, while the predictors are `bill_length_mm` and `bill_depth_mm`.
 
-Finally, our test can be systematized as follows:
+To define what we mean by "effectively predict," we will establish the following decision criteria:
+
+- Predictors must exert a statistically significant effect on the response variable.
+- The model should satisfy all validity assumptions.
+- The variance explained by the predictors ($\text{R}^{2}_{\text{adj}}$) must exceed 0.5, indicating a substantial effect on the response variable ($\text{Cohen's } f^2 = \cfrac{0.5}{1 - 0.5} = 1$.)
+
+This 0.5 threshold is not arbitrary; it represents the average level of variance explained in response variables during observational field studies in ecology, especially when there is limited control over factors influencing variance [@peek2003].
+
+Finally, our hypothesis test can be systematized as follows:
 
 $$
 \begin{cases}
@@ -88,23 +93,21 @@ $$
 \text{H}_{a}: \text{R}^{2}_{\text{adj}} > 0.5
 \end{cases}
 $$
-Beyond a $\text{R}^{2}_{\text{adj}}$ over 0.5, predictor effects must be statistically significant, and model assumptions should be met.
+
+In addition to an adjusted R-squared greater than 0.5, we will require predictor effects to be statistically significant and all model assumptions to be met.
+
+We will set the significance level ($\alpha$) at 0.05, allowing a 5% chance of a [Type I error](https://en.wikipedia.org/wiki/Type_I_and_type_II_errors). A power analysis will be performed to determine the necessary sample size for detecting a significant effect, targeting a power ($1 - \beta$) of 0.8.
+
+Assumption checks will include:
+
+- Assessing the normality of residuals through visual inspections, such as [Q-Q plots](https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot), and statistical tests like the [Shapiro-Wilk test](https://en.wikipedia.org/wiki/Shapiro%E2%80%93Wilk_test).
+- Evaluating homoscedasticity using tests like the [Breusch-Pagan test](https://en.wikipedia.org/wiki/Breusch%E2%80%93Pagan_test) to ensure constant variance of residuals across predictor levels.
+
+We will assess multicollinearity by calculating variance inflation factors ([VIF](https://en.wikipedia.org/wiki/Variance_inflation_factor)), with a VIF above 10 indicating potential issues. Influential points will be examined using [Cook's distance](https://en.wikipedia.org/wiki/Cook%27s_distance) and leverage values to identify any points that may disproportionately affect model outcomes.
 
 ::: {.callout-note}
-Here we are assessing predictive power, not causality, so an effect size measure (like Cohen's $f^{2}$) isn't required.
-
-Predictive models alone should never be used to establish causal relationships [@arif2022].
+It's important to emphasize that we are assessing predictive power, not establishing causality. Predictive models alone should never be used to infer causal relationships [@arif2022].
 :::
-
-## Methods
-
-To address our hypothesis and research question, we will employ a general linear model with multiple regression analysis, sourcing data from the [Palmer Penguins dataset](https://github.com/allisonhorst/palmerpenguins/), which includes measurements from Adélie penguins. The response variable is `flipper_length_mm` (flipper length in mm), and the predictor variables are `bill_length_mm` and `bill_depth_mm`.
-
-We set the significance level ($\alpha$) at 0.05, allowing a 5% chance of a [Type I error](https://en.wikipedia.org/wiki/Type_I_and_type_II_errors). Assumption checks will include assessing the normality of residuals through visual inspections like [Q-Q plots](https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot) and statistical tests such as the [Shapiro-Wilk test](https://en.wikipedia.org/wiki/Shapiro%E2%80%93Wilk_test). Homoscedasticity will be evaluated using tests like the [Breusch-Pagan test](https://en.wikipedia.org/wiki/Breusch%E2%80%93Pagan_test) to ensure constant variance of residuals across predictor levels.
-
-Multicollinearity will be assessed by calculating variance inflation factors ([VIF](https://en.wikipedia.org/wiki/Variance_inflation_factor)), with a VIF above 10 indicating potential issues. We will also consider influential points by employing [Cook's distance](https://en.wikipedia.org/wiki/Cook%27s_distance) and leverage values to identify any points that might unduly affect the model outcomes.
-
-Model evaluation will focus on the adjusted R-squared to determine the proportion of variance in `flipper_length_mm` explained by the predictors, considering the number of predictors. We will also assess the statistical significance of each predictor through p-values.
 
 ##  An overview of general linear models
 
@@ -149,6 +152,10 @@ for $i = 1, \dots, n$ [@degroot2012, p. 737].
 
 (Linearity of the phenomenon measured [@hair2019, p. 287])
 
+::: {.callout-warning}
+It is important to clarify that the linear assumption pertains to **linearity in the parameters** or equivalently, linearity in the coefficients. This means that each predictor is multiplied by its corresponding regression coefficient. However, this does not imply that the relationship between the predictors and the response variable is linear. In fact, a linear model can still effectively capture non-linear relationships between predictors and the response variable by utilizing transformations of the predictors [@cohen2002].
+:::
+
 Assumption 4
 : \hspace{20cm} __Common variance__ (homoscedasticity). There is as parameter $\sigma^{2}$ such the conditional variance of $Y_{i}$ given the values $z_{1}, \dots , z_{n}$ is $\sigma^{2}$ for $i = 1, \dots\, n$.
 
@@ -170,6 +177,7 @@ library(car)
 library(checkmate)
 library(cowplot)
 library(dplyr)
+library(effectsize)
 library(fBasics)
 library(forecast)
 library(ggeffects)
@@ -188,9 +196,12 @@ library(moments)
 library(nortest)
 library(olsrr)
 library(palmerpenguins)
+library(parameters)
 library(parsnip)
 library(performance)
 library(predict3d)
+library(psychometric)
+library(pwrss)
 library(recipes)
 library(report)
 library(rgl)
@@ -216,55 +227,6 @@ library(magrittr)
 gg_color_hue <- function(n) {
   hues = seq(15, 375, length = n + 1)
   hcl(h = hues, l = 65, c = 100)[1:n]
-}
-```
-
-```{r}
-#| code-fold: true
-
-gg_color_hue <- function(n) {
-  hues = seq(15, 375, length = n + 1)
-  hcl(h = hues, l = 65, c = 100)[1:n]
-}
-```
-
-```{r}
-#| code-fold: true
-
-# See https://stackoverflow.com/a/64579266/8258804
-
-get_elements_1 <- function(x, element) {
-  checkmate::assert_string(element)
-  
-  if (is.list(x)) {
-    if (element %in% names(x)) {
-      x[[element]]
-    } else {
-      lapply(x, get_elements_1, element = element)
-    }
-  }
-}
-```
-
-```{r}
-#| code-fold: true
-
-# See https://stackoverflow.com/a/64579266/8258804
-
-get_elements_2 <- function(x, pattern) {
-  checkmate::assert_string(pattern)
-  
-  if (is.list(x)) {
-    for (i in x) {
-      if (is.character(i)) {
-        if (any(stringr::str_detect(i, pattern), na.rm = TRUE)) {
-          return(x)
-        }
-      }
-    }
-    
-    lapply(x, get_elements, pattern = pattern)
-  }
 }
 ```
 
@@ -898,7 +860,36 @@ Data frame with morphological measurements of penguin species from the [Palmer A
 report::report(data)
 ```
 
-## Checking variable distributions
+## Performing the power analysis
+
+First we will perform a *a posteriori* power analysis to determine the sample size needed to achieve a power ($1 - \beta$) of 0.8, given an $R^2$ of 0.5, a significance level ($\alpha$) of 0.05, and 2 predictors. It's a *a posterior* analysis because we already have the data in hand. It's a good practice to perform a power analysis before running the model to ensure that the sample size is adequate.
+
+The results show that we need at least 14 observations to achieve the desired power. We have 151 observations, which is more than enough.
+
+```{r}
+pre_pwr <- pwrss::pwrss.f.reg(
+  r2 = 0.5, 
+  k = 2,
+  power = 0.80,
+  alpha = 0.05
+)
+```
+
+```{r}
+pwrss::power.f.test(
+  ncp = pre_pwr$ncp,
+  df1 = pre_pwr$df1,
+  df2 = pre_pwr$df2,
+  alpha = pre_pwr$parms$alpha,
+  plot = TRUE
+)
+```
+
+```{r}
+nrow(data) >= pre_pwr$n
+```
+
+## Checking distributions
 
 The data show fairly normal distributions. It seems that the `bill_length_mm` and `bill_depth_mm` variables appear slightly skewed, while the `flipper_length_mm` variable is more symmetric.
 
@@ -997,7 +988,7 @@ Correlation matrix of `bill_length_mm`, `bill_depth_mm`, and `flipper_length_mm`
 
 A few minor outliers are present in the `bill_length_mm` and `flipper_length_mm` variables. We could remove these outliers, but they are not extreme and do not appear to be errors.
 
-A few observations were flagged with Cook’s D values greater than the threshold. One of them (129) was particularly influential, so it was removed from the dataset.
+A few observations were flagged with Cook’s D values greater than the threshold. One of them (129th) was particularly influential, so it was removed from the dataset.
 
 ### Boxplots
 
@@ -1060,9 +1051,11 @@ data |>
 Boxplot of the `flipper_length_mm` variable, with outliers highlighted in red and other data indicated by jittered points.
 :::
 
-### Cook's D
+### Cook's distance
 
-[Cook's D](https://en.wikipedia.org/wiki/Cook%27s_distance) measures each observation's influence on the model's fitted values. It is considered one of the most representative metrics for assessing overall influence. A common practice is to flag observations with a Cook's distance of 1.0 or greater. However, a more conservative threshold of $4 / (n - k - 1)$, where $n$ is the sample size and $k$ is the number of independent variables, is suggested as a more conservative measure in small samples or for use with larger datasets. [@hair2019]
+The [Cook's distance](https://en.wikipedia.org/wiki/Cook%27s_distance) measures each observation's influence on the model's fitted values. It is considered one of the most representative metrics for assessing overall influence [@hair2019].
+
+A common practice is to flag observations with a Cook's distance of 1.0 or greater. However, a more conservative threshold of $4 / (n - k - 1)$, where $n$ is the sample size and $k$ is the number of independent variables, is suggested as a more conservative measure in small samples or for use with larger datasets [@hair2019].
 
 Learn more about Cook's D in: @cook1977; @cook1979.
 
@@ -1104,6 +1097,10 @@ q |> ggplot2::ggplot_gtable() |> ggplotify::as.ggplot()
 ```
 
 ### Outlier removal
+
+Outlier detection methods indicate which observations are unusual or influential, and it's our job to determine why certain observations stand out [@struck2024]. In this scenario, a [observational error](https://en.wikipedia.org/wiki/Observational_error) or a unique characteristic of the penguin species might be causing some distortions.
+
+For practical reasons, we will remove the 129th observation for now. However, it's crucial to review the model assumptions before making this decision. Violating an assumption might cause many observations to be incorrectly labeled as outliers.
 
 ```{r}
 data <- data |> dplyr::slice(-129)
@@ -1174,10 +1171,7 @@ fit_engine |> summary()
 ```
 
 ```{r}
-#| eval: false
-#| include: false
-
-olsrr::ols_regress(form, data = data)
+fit_engine |> parameters::standardize_parameters()
 ```
 
 ```{r}
@@ -1257,7 +1251,7 @@ rgl::view3d(userMatrix = user_matrix, zoom = 0.9)
 rgl::rglwidget(elementId = "1st") |> rutils:::shush()
 ```
 
-A 3D visualization of the fitted model: the plane represents the fitted model, while the points represent the observed data. *Use the mouse to explore*.
+A 3D visualization of the fitted model: the plane represents the fitted model, while the points represent the observed data. **Use the mouse to explore**.
 :::
 
 ::: {#fig-model-fit}
@@ -1426,31 +1420,20 @@ Posterior predictive checks are a technique used in Bayesian statistics to asses
 ```{r}
 diag_sum_plots <- 
   fit_engine_2 |> 
-  performance::check_model(panel = FALSE) |>
+  performance::check_model(
+    panel = FALSE,
+    colors = c("red", "black", "black")
+  ) |>
   plot() |>
   rutils:::shush()
 
-plot <- 
-  diag_sum_plots$PP_CHECK +
+diag_sum_plots$PP_CHECK +
   ggplot2::labs(
     title = ggplot2::element_blank(),
-    subtitle = ggplot2::element_blank()
+    subtitle = ggplot2::element_blank(),
+    x = "Flipper length (mm)",
   ) +
   ggplot2::theme_gray()
-
-plot <- plot |> ggplot2::ggplot_build()
-
-for (i in c(1)) {
-  # "#1b6ca8" "#3aaf85"
-  plot$data[[i]]$colour <- dplyr::case_when(
-    plot$data[[i]]$colour == "#3aaf85" ~ "red",
-    plot$data[[i]]$colour == "#1b6ca8" ~ "blue",
-    plot$data[[i]]$colour == "darkgray" ~ "black",
-    TRUE ~ plot$data[[i]]$colour
-  )
-}
-
-plot |> ggplot2::ggplot_gtable() |> ggplotify::as.ggplot()
 ```
 
 ## Performing model diagnostics
@@ -1528,8 +1511,8 @@ We also recommend checking the original papers for each test to understand their
 
 $$
 \begin{cases}
-\text{H}_{0}: \text{Normality} \\
-\text{H}_{a}: \text{Nonnormality}
+\text{H}_{0}: \text{The data is normally distributed} \\
+\text{H}_{a}: \text{The data is not normally distributed}
 \end{cases}
 $$
 
@@ -1571,7 +1554,7 @@ fit |>
   ggplot2::labs(x = "Fitted values", y = "Residuals")
 ```
 
-Residual plot showing the relationship between fitted values and residuals, with the red line representing zero residuals indicating an ideal model fit, and the black line indicating the smoothed conditional mean of residuals, with the shaded region representing the confidence interval of this estimate.
+Residual plot showing the relationship between fitted values and residuals, with the dashed black line representing zero residuals, indicating an ideal model fit, and the red line indicating the smoothed conditional mean of residuals, with the shaded region representing the confidence interval of this estimate.
 :::
 
 ::: {#fig-model-residual-diag-linearity-1}
@@ -1882,20 +1865,48 @@ Condition indexes and eigenvalues for each predictor variable.
 
 ### Measures of influence
 
+In this section, we will check several measures of influence that can be used to assess the impact of individual observations on the model estimates.
+
+Leverage points
+: **Leverage** is a measure of the distance between individual values of a predictor and other values of the predictor. In other words, a point with high leverage has an x-value far away from the other x-values. Points with high leverage have the potential to influence our model estimates [@struck2024; @hair2019, p. 262].
+
+Influence points
+: **Influence** is a measure of how much an observation affects the model estimates. If an observation with large influence were removed from the dataset, we would expect a large change in the predictive equation [@struck2024].
+
 ```{r}
-#| eval: false
+fit_engine |> stats::hatvalues() |> head()
+```
 
-# !See! https://sscc.wisc.edu/sscc/pubs/RegDiag-R/no-outlier-effects.html
+#### Cook's distance
 
-fit_engine |> stats::rstudent()
-fit_engine |> stats::dffits()
+The [Cook's D](https://en.wikipedia.org/wiki/Cook%27s_distance) measures each observation's influence on the model's fitted values. It is considered one of the most representative metrics for assessing overall influence [@hair2019].
+
+A common practice is to flag observations with a Cook's distance of 1.0 or greater. However, a more conservative threshold of $4 / (n - k - 1)$, where $n$ is the sample size and $k$ is the number of independent variables, is suggested as a more conservative measure in small samples or for use with larger datasets [@hair2019].
+
+Learn more about Cook's D in: @cook1977; @cook1979.
+
+```{r}
+fit_engine |> stats::cooks.distance() |> head()
+```
+
+```{r}
+plot <- fit_engine |> olsrr::ols_plot_cooksd_bar(print_plot = FALSE)
+
+q <- plot$plot + ggplot2::labs(title = ggplot2::element_blank())
+q <- q |> ggplot2::ggplot_build()
+q$data[[5]]$label <- ""
+
+q |> ggplot2::ggplot_gtable() |> ggplotify::as.ggplot()
 ```
 
 ::: {#fig-model-diag-influence-1}
 ```{r}
 diag_sum_plots <- 
   fit_engine_2 |> 
-  performance::check_model(panel = FALSE) |>
+  performance::check_model(
+    panel = FALSE,
+    colors = c("blue", "black", "black")
+  ) |>
   plot() |>
   rutils:::shush()
 
@@ -1918,7 +1929,7 @@ plot <- plot |> ggplot2::ggplot_build()
 for (i in c(1:9)) {
   # "#1b6ca8" "#3aaf85"
   plot$data[[i]]$colour <- dplyr::case_when(
-    plot$data[[i]]$colour == "#3aaf85" ~ ifelse(i == 4, "red", "blue"),
+    plot$data[[i]]$colour == "blue" ~ ifelse(i == 4, "red", "blue"),
     plot$data[[i]]$colour == "#1b6ca8" ~ "black",
     plot$data[[i]]$colour == "darkgray" ~ "black",
     TRUE ~ plot$data[[i]]$colour
@@ -1931,32 +1942,59 @@ plot |> ggplot2::ggplot_gtable() |> ggplotify::as.ggplot()
 Influential observations. The blue line represents the [Cook's distance](https://en.wikipedia.org/wiki/Cook%27s_distance). Any points outside the contour lines are influential observations.
 :::
 
-[Cook’s D Bar Plot](https://olsrr.rsquaredacademy.com/articles/influence_measures#cooks-d-bar-plot)
+####  Influence on prediction (DFFITS)
+
+[DFFITS](https://en.wikipedia.org/wiki/DFFITS) (difference in fits) is a standardized measure of how much the prediction for a given observation would change if it were deleted from the model. Each observation’s DFFITS is standardized by the standard deviation of fit at that point [@struck2024].
+
+Learn more about DDFITS in: @welsch1977 and @belsley2004.
 
 ```{r}
-plot <- fit_engine |> olsrr::ols_plot_cooksd_bar(print_plot = FALSE)
-
-q <- plot$plot + ggplot2::labs(title = ggplot2::element_blank())
-q <- q |> ggplot2::ggplot_build()
-q$data[[5]]$label <- ""
-
-q |> ggplot2::ggplot_gtable() |> ggplotify::as.ggplot()
+fit_engine |> stats::dffits() |> head()
 ```
-
-
-[DFBETAs Panel](https://olsrr.rsquaredacademy.com/articles/influence_measures#dfbetas-panel)
-
-```{r}
-fit_engine |> olsrr::ols_plot_dfbetas()
-```
-
-
-[DFFITS Plot](https://olsrr.rsquaredacademy.com/articles/influence_measures#dffits-plot)
 
 ```{r}
 fit_engine |> olsrr::ols_plot_dffits()
 ```
 
+####  Influence on parameter estimates (DFBETAS)
+
+[DFBETAS](https://en.wikipedia.org/wiki/Influential_observation#:~:text=measures%20of%20influence) are standardized differences between regression coefficients in a model with a given observation, and a model without that observation. DFBETAS are standardized by the standard error of the coefficient.
+
+Learn more about DFBETAS in: @welsch1977 and @belsley2004.
+
+```{r}
+fit_engine |> stats::dfbeta() |> head()
+```
+
+```{r}
+plots <- fit_engine |> olsrr::ols_plot_dfbetas(print_plot = FALSE)
+```
+
+```{r}
+plots$plots[[1]]
+```
+
+```{r}
+plots$plots[[2]]
+```
+
+```{r}
+plots$plots[[3]]
+```
+
+```{r}
+fit_engine |> stats::dffits() |> head()
+```
+
+#### Studentized residuals
+
+```{r}
+fit_engine |> stats::rstandard() |> head()
+```
+
+```{r}
+fit_engine |> stats::rstudent() |> head()
+```
 
 [Studentized Residual Plot](https://olsrr.rsquaredacademy.com/articles/influence_measures#studentized-residual-plot)
 
@@ -1973,9 +2011,6 @@ fit_engine |> olsrr::ols_plot_resid_stand()
 
 [Studentized Residuals vs Leverage Plot](https://olsrr.rsquaredacademy.com/articles/influence_measures#standardized-residual-chart)
 
-Leverage points
-: \hspace{20cm} "Type of _influential observation_ defined by one aspect of influence termed _leverage_. These observations are substantially different on one or more independent variables, so that they affect the estimation of one or more _regression coefficients_" [@hair2019, p. 262].
-
 ::: {#fig-model-residual-diag-leverage}
 ```{r}
 fit_engine |> olsrr::ols_plot_resid_lev()
@@ -1990,7 +2025,11 @@ Relation between the model studentized residuals and their leverage/influence po
 fit_engine |> olsrr::ols_plot_resid_stud_fit()
 ```
 
+#### Hadi plot
+
 [Hadi Plot](https://olsrr.rsquaredacademy.com/articles/influence_measures#hadi-plot)
+
+Learn more about Hadi's influence measure in: @chatterjee2012.
 
 ```{r}
 fit_engine |> olsrr::ols_plot_hadi()
@@ -2028,13 +2067,45 @@ fit |>
   janitor::adorn_rounding(5)
 ```
 
-Now let's check the adjusted $R^{2}$ value to see if it is greater than 0.5. We can see in the table below that the adjusted $R^{2}$ is lower than 0.5 (`r round(broom::glance(fit)$adj.r.squared, 5)`, which means that the model does not explain more than 50% of the variance in the dependent variable. So **we must reject the null hypothesis in favor of the alternative hypothesis**. (**Adjusted R squared requirement**: False)
+Now let's check the adjusted $R^{2}$ value to see if it is greater than 0.5. We can see in the table below that the adjusted $R^{2}$ is lower than 0.5 (`r round(broom::glance(fit)$adj.r.squared, 5)`, which means that the model does not explain more than 50% of the variance in the dependent variable. So **we must reject the alternative hypothesis in favor of the null hypothesis**. (**Adjusted R squared requirement**: False)
 
 ```{r}
 fit |> 
   broom::glance() |> 
   tidyr::pivot_longer(cols = dplyr::everything()) |>
   janitor::adorn_rounding(10)
+```
+
+```{r}
+# LCL = Lower Confidence Limit
+# UCL = Upper Confidence Limit
+
+psychometric::CI.Rsq(
+  rsq = broom::glance(fit)$adj.r.squared,
+  n = nrow(data),
+  k = length(fit_engine$coefficients) - 1,
+  level = 0.95
+)
+```
+
+If we would like to interpret the adjusted $R^{2}$ value in terms of effect size, we can use the following code:
+
+<!-- @cohen1988 -->
+
+```{r}
+fit |> 
+  broom::glance() |> 
+  magrittr::extract2("adj.r.squared") |>
+  effectsize::interpret_r2("cohen1988")
+```
+
+<!-- @falk1992 -->
+
+```{r}
+fit |> 
+  broom::glance() |> 
+  magrittr::extract2("adj.r.squared") |>
+  effectsize::interpret_r2("falk1992")
 ```
 
 ## Conclusion

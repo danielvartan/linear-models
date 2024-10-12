@@ -44,7 +44,8 @@ website:
 
 format:
   html:
-    toc: false
+    toc: true
+    toc-location: right
     locale: en
     language: en-us
     code-tools: true
