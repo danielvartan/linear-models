@@ -22,6 +22,8 @@ Artwork by [Allison Horst](https://allisonhorst.com/).
 
 ## Question
 
+Every scientific investigation begins with a question. In this case, we will address the following:
+
 **Can bill length and bill depth alone effectively predict flipper length in [Adélie penguins](https://en.wikipedia.org/wiki/Ad%C3%A9lie_penguin)?**
 
 Imagine a debate between two marine biologists: one claims that bill length and depth could be used to predict flipper length, while the other disagrees.
@@ -40,7 +42,7 @@ Artwork by [Allison Horst](https://allisonhorst.com/).
 
 ## Hypothesis
 
-To approach this question, we will apply Popper’s hypothetico-deductive method, also known as the *method of conjecture and refutation* [@popper1979, p. 164]. The basic structure of this approach can be summarized as follows:
+To approach our question, we will apply Popper’s hypothetico-deductive method, also known as the *method of conjecture and refutation* [@popper1979, p. 164]. The basic structure of this approach can be summarized as follows:
 
 ```{mermaid}
 %%| label: fig-mermaid
@@ -56,7 +58,7 @@ flowchart LR
 "Here $\text{P}_1$, is the **problem** from which we start, $\text{TT}$ (the ‘tentative theory’) is the imaginative conjectural solution which we first reach, for example our first **tentative interpretation**. $\text{EE}$ (‘**error- elimination**’) consists of a severe critical examination of our conjecture, our tentative interpretation: it consists, for example, of the critical use of documentary evidence and, if we have at this early stage more than one conjecture at our disposal, it will also consist of a critical discussion and comparative evaluation of the competing conjectures. $\text{P}_2$ is the problem situation as it emerges from our first critical attempt to solve our problems.
 It leads up to our second attempt (**and so on**)." [@popper1979, p. 164]
 
-As our tentative theory or main hypothesis, we propose the following:
+As our tentative theory or main hypothesis, I propose the following:
 
 **Bill length and bill depth can effectively predict flipper length in Adélie penguins**.
 
@@ -75,13 +77,13 @@ $$
 
 ## Methods
 
-To test this hypothesis, we will use a general linear model with multiple regression analysis, evaluating the relationship between multiple predictors and a response variable. Here, the response variable is `flipper_length_mm`, while the predictors are `bill_length_mm` and `bill_depth_mm`.
+To test our hypothesis, we will use a general linear model with multiple regression analysis, evaluating the relationship between multiple predictors and a response variable. Here, the response variable is `flipper_length_mm`, while the predictors are `bill_length_mm` and `bill_depth_mm`.
 
-To define what we mean by "effectively predict," we will establish the following decision criteria:
+To define what we mean by *effectively predict*" we will establish the following decision criteria:
 
-- Predictors must exert a statistically significant effect on the response variable.
+- Predictors should exhibit a statistically significant association with the response variable.
 - The model should satisfy all validity assumptions.
-- The variance explained by the predictors ($\text{R}^{2}_{\text{adj}}$) must exceed 0.5, indicating a substantial effect on the response variable ($\text{Cohen's } f^2 = \cfrac{0.5}{1 - 0.5} = 1$.)
+- The variance explained by the predictors ($\text{R}^{2}_{\text{adj}}$) must exceed 0.5, suggesting a strong association with the response variable ($\text{Cohen's } f^2 = \cfrac{0.5}{1 - 0.5} = 1$.)
 
 This 0.5 threshold is not arbitrary; it represents the average level of variance explained in response variables during observational field studies in ecology, especially when there is limited control over factors influencing variance [@peek2003].
 
@@ -94,7 +96,7 @@ $$
 \end{cases}
 $$
 
-In addition to an adjusted R-squared greater than 0.5, we will require predictor effects to be statistically significant and all model assumptions to be met.
+In addition to an adjusted R-squared greater than 0.5, we will require predictors to show statistically significant associations and for the model to meet all assumptions.
 
 We will set the significance level ($\alpha$) at 0.05, allowing a 5% chance of a [Type I error](https://en.wikipedia.org/wiki/Type_I_and_type_II_errors). A power analysis will be performed to determine the necessary sample size for detecting a significant effect, targeting a power ($1 - \beta$) of 0.8.
 
@@ -157,7 +159,7 @@ It is important to clarify that the linear assumption pertains to **linearity in
 :::
 
 Assumption 4
-: \hspace{20cm} __Common variance__ (homoscedasticity). There is as parameter $\sigma^{2}$ such the conditional variance of $Y_{i}$ given the values $z_{1}, \dots , z_{n}$ is $\sigma^{2}$ for $i = 1, \dots\, n$.
+: \hspace{20cm} __Common variance__ (homoscedasticity). There is as parameter $\sigma^{2}$ such the conditional variance of $Y_{i}$ given the values $z_{1}, \dots , z_{n}$ is $\sigma^{2}$ for $i = 1, \dots, n$.
 
 (Constant variance of the error terms [@hair2019, p. 287])
 
@@ -662,7 +664,7 @@ test_normality <- function(x,
     cvm <-
       x |>
       nortest::cvm.test() |>
-      rutils:::shush()
+      rutils::shush()
   } else {
     ad <- NULL
     cmv <- NULL
@@ -674,7 +676,7 @@ test_normality <- function(x,
   dagostino <-
     x |>
     fBasics::dagoTest() |>
-    rutils:::shush()
+    rutils::shush()
 
   jarque_bera <-
     rutils:::drop_na(x) |>
@@ -841,6 +843,8 @@ normality_sum <- function(
 **Assumption 1** is satisfied, as the predictors are known.
 
 ```{r}
+#| code-fold: true
+
 data <- 
   palmerpenguins::penguins |> 
   dplyr::filter(species == "Adelie") |>
@@ -850,6 +854,8 @@ data <-
 
 ::: {#tbl-data-prep-1}
 ```{r}
+#| code-fold: true
+
 data
 ```
 
@@ -860,13 +866,15 @@ Data frame with morphological measurements of penguin species from the [Palmer A
 report::report(data)
 ```
 
-## Performing the power analysis
+## Performing a power analysis
 
 First we will perform a *a posteriori* power analysis to determine the sample size needed to achieve a power ($1 - \beta$) of 0.8, given an $R^2$ of 0.5, a significance level ($\alpha$) of 0.05, and 2 predictors. It's a *a posterior* analysis because we already have the data in hand. It's a good practice to perform a power analysis before running the model to ensure that the sample size is adequate.
 
-The results show that we need at least 14 observations to achieve the desired power. We have 151 observations, which is more than enough.
+The results show that we need at least 14 observations for each variable to achieve the desired power. We have 151 observations, which is more than enough.
 
 ```{r}
+#| code-fold: true
+
 pre_pwr <- pwrss::pwrss.f.reg(
   r2 = 0.5, 
   k = 2,
@@ -876,6 +884,8 @@ pre_pwr <- pwrss::pwrss.f.reg(
 ```
 
 ```{r}
+#| code-fold: true
+
 pwrss::power.f.test(
   ncp = pre_pwr$ncp,
   df1 = pre_pwr$df1,
@@ -885,8 +895,13 @@ pwrss::power.f.test(
 )
 ```
 
+Is the data size greater or equal to the required size?
+
 ```{r}
-nrow(data) >= pre_pwr$n
+data |> 
+  tidyr::drop_na() |> 
+  nrow() |>
+  magrittr::is_weakly_greater_than(pre_pwr$n)
 ```
 
 ## Checking distributions
@@ -978,7 +993,11 @@ Both `bill_length_mm` and `bill_depth_mm` are positively correlated with `flippe
 
 ::: {#fig-correlations-correlation-matrix}
 ```{r}
-data |> plot_ggally() |> rutils:::shush()
+#| code-fold: true
+
+data |> 
+  plot_ggally() |> 
+  rutils::shush()
 ```
 
 Correlation matrix of `bill_length_mm`, `bill_depth_mm`, and `flipper_length_mm` variables.
@@ -993,11 +1012,15 @@ A few observations were flagged with Cook’s D values greater than the threshol
 ### Boxplots
 
 ```{r}
+#| code-fold: true
+
 colors <- gg_color_hue(3)
 ```
 
 ::: {#fig-outliers-1}
 ```{r}
+#| code-fold: true
+
 data |> 
   tidyr::pivot_longer(-flipper_length_mm) |>
   ggplot2::ggplot(ggplot2::aes(x = name, y = value, fill = name)) +
@@ -1026,6 +1049,8 @@ Boxplots of the `bill_length_mm` and `bill_depth_mm` variables, with outliers hi
 
 ::: {#fig-outliers-2}
 ```{r}
+#| code-fold: true
+
 data |> 
   tidyr::pivot_longer(flipper_length_mm) |>
   ggplot2::ggplot(ggplot2::aes(x = name, y = value, fill = name)) +
@@ -1074,6 +1099,8 @@ fit <- lm(form, data = data)
 ```
 
 ```{r}
+#| code-fold: true
+
 cooks_obs <- 
   fit |> 
   stats::cooks.distance() %>%
@@ -1086,9 +1113,15 @@ fit |>
   magrittr::extract(cooks_obs)
 ```
 
+::: {#fig-outliers-3}
 ```{r}
-plot <- fit |> olsrr::ols_plot_cooksd_bar(print_plot = FALSE)
+#| code-fold: true
 
+plot <- 
+  fit |> 
+  olsrr::ols_plot_cooksd_bar(type = 2, print_plot = FALSE)
+
+# The following procedure changes the plot aesthetics.
 q <- plot$plot + ggplot2::labs(title = ggplot2::element_blank())
 q <- q |> ggplot2::ggplot_build()
 q$data[[5]]$label <- ""
@@ -1096,11 +1129,14 @@ q$data[[5]]$label <- ""
 q |> ggplot2::ggplot_gtable() |> ggplotify::as.ggplot()
 ```
 
+Cook's distance for each observation along with a threshold line at $4 / (n - k - 1)$.
+:::
+
 ### Outlier removal
 
 Outlier detection methods indicate which observations are unusual or influential, and it's our job to determine why certain observations stand out [@struck2024]. In this scenario, a [observational error](https://en.wikipedia.org/wiki/Observational_error) or a unique characteristic of the penguin species might be causing some distortions.
 
-For practical reasons, we will remove the 129th observation for now. However, it's crucial to review the model assumptions before making this decision. Violating an assumption might cause many observations to be incorrectly labeled as outliers.
+For practical reasons, I will remove the 129th observation for now. However, it's crucial to review the model assumptions before making this decision. Violating an assumption might cause many observations to be incorrectly labeled as outliers.
 
 ```{r}
 data <- data |> dplyr::slice(-129)
@@ -1112,7 +1148,7 @@ data <- data |> dplyr::slice(-129)
 recipe <- 
   data |>
   recipes::recipe(form) |>
-  rutils:::shush()
+  rutils::shush()
 ```
 
 ```{r}
@@ -1123,6 +1159,8 @@ model <-
 ```
 
 ```{r}
+#| code-fold: true
+
 workflow <- 
   workflows::workflow() |>
   workflows::add_recipe(recipe) |>
@@ -1135,6 +1173,8 @@ fit <- workflow |> parsnip::fit(data)
 
 ::: {#tbl-model-fit-1}
 ```{r}
+#| code-fold: true
+
 fit |>
   broom::tidy() |> 
   janitor::adorn_rounding(5)
@@ -1145,6 +1185,8 @@ Output from the model fitting process showing the estimated coefficients, standa
 
 ::: {#tbl-model-fit-2}
 ```{r}
+#| code-fold: true
+
 fit |> 
   broom::augment(data) |>
   janitor::adorn_rounding(5)
@@ -1155,6 +1197,8 @@ Model summary table displaying predictions and residuals, along with the variabl
 
 ::: {#tbl-model-fit-3}
 ```{r}
+#| code-fold: true
+
 fit |> 
   broom::glance() |> 
   tidyr::pivot_longer(cols = dplyr::everything()) |>
@@ -1170,22 +1214,20 @@ fit_engine <- fit |> parsnip::extract_fit_engine()
 fit_engine |> summary()
 ```
 
+::: {#tbl-model-fit-4}
 ```{r}
+#| code-fold: true
+
 fit_engine |> parameters::standardize_parameters()
 ```
 
-```{r}
-# A jerry-rigged solution to fix issues related to modeling using the pipe.
+Standardized model parameters (coefficients) along with their ranges, based on a 95% confidence interval.
+:::
 
-# fit_2 <- fit
-# 
-# fit_2$fit$fit$fit$call <- call(
-#   "lm", 
-#   flipper_length_mm ~ bill_length_mm + bill_depth_mm, 
-#   data = quote("data")
-# )
-# 
-# fit_engine_2 <- fit_2 |> parsnip::extract_fit_engine()
+```{r}
+#| code-fold: true
+
+# A jerry-rigged solution to fix issues related to modeling using the pipe.
 
 fit_engine_2 <- lm(form, data = data)
 ```
@@ -1196,7 +1238,7 @@ report::report(fit_engine_2)
 
 ## Inspecting the model fit
 
-### General model
+### Predictions
 
 In a multiple linear regression with two predictors, the model is fit by adjusting a plane to the data points.
 
@@ -1223,6 +1265,8 @@ In a multiple linear regression with two predictors, the model is fit by adjusti
 
 ::: {#fig-model-fit-comparison-1}
 ```{r}
+#| code-fold: true
+
 user_matrix <-
   dplyr::tribble(
     ~a,         ~b,         ~c,          ~d,
@@ -1248,18 +1292,20 @@ fit_engine |>
 
 rgl::view3d(userMatrix = user_matrix, zoom = 0.9)
 
-rgl::rglwidget(elementId = "1st") |> rutils:::shush()
+rgl::rglwidget(elementId = "1st") |> rutils::shush()
 ```
 
-A 3D visualization of the fitted model: the plane represents the fitted model, while the points represent the observed data. **Use the mouse to explore**.
+A 3D visualization of the fitted model: the plane represents the model, while the points represent the observed data. **Use the mouse to explore**.
 :::
 
 ::: {#fig-model-fit}
 ```{r}
+#| code-fold: true
+
 limits <- 
   stats::predict(fit_engine, interval = "prediction") |>
   dplyr::as_tibble() |>
-  rutils:::shush()
+  rutils::shush()
 
 fit |>
   broom::augment(data) |>
@@ -1282,7 +1328,7 @@ fit |>
     method = "loess",
     formula = y ~ x,
     linetype = "dashed",
-    size = 0.2,
+    linewidth = 0.2,
     color = "black"
   ) +
   ggplot2::geom_smooth(
@@ -1291,7 +1337,7 @@ fit |>
     method = "loess",
     formula = y ~ x,
     linetype = "dashed",
-    size = 0.2,
+    linewidth = 0.2,
     color = "black"
   ) +
   ggplot2::geom_point() +
@@ -1314,10 +1360,12 @@ Relation between observed and predicted values. The red line is a 45-degree line
 
 ### Adjusted predictions
 
-If we keep all predictors fixed except one, we can observe the regression line between that independent variable and the dependent variable. Here, we present different visualizations of the fitted model. This is important for understanding how each predictor is associated with the outcome.
+If we keep all predictors fixed except one, we can observe the regression line between that independent variable and the dependent variable. Here, I present different visualizations of the fitted model. This is important for understanding how each predictor is associated with the outcome.
 
 ::: {#fig-model-fit-comparison-2}
 ```{r}
+#| code-fold: true
+
 fit |>
   broom::augment(data) |>
   ggplot2::ggplot(ggplot2::aes(bill_length_mm, flipper_length_mm)) +
@@ -1348,6 +1396,8 @@ Model prediction (blue line) and adjusted prediction (red line) plotted against 
 
 ::: {#fig-model-fit-comparison-3}
 ```{r}
+#| code-fold: true
+
 fit |>
   broom::augment(data) |>
   ggplot2::ggplot(ggplot2::aes(bill_depth_mm, flipper_length_mm)) +
@@ -1373,7 +1423,7 @@ fit |>
   )
 ```
 
-Model prediction (blue line) and adjusted prediction (red line) plotted against a scatter plot of the dependent variable (`flipper_length_mm`) and one of the independent variables (`bill_depth_mm`). The adjusted prediction is calculated by holding the `bill_depth_mm` variable constant at its mean value.
+Model prediction (blue line) and adjusted prediction (red line) plotted against a scatter plot of the dependent variable (`flipper_length_mm`) and one of the independent variables (`bill_depth_mm`). The adjusted prediction is calculated by holding the `bill_length_mm` variable constant at its mean value.
 :::
 
 <!-- See: https://cran.r-project.org/web/packages/predict3d/vignettes/predict3d.html -->
@@ -1396,6 +1446,8 @@ fit_engine |>
 
 ::: {#fig-model-fit-comparison-4}
 ```{r}
+#| code-fold: true
+
 fit_engine_2 |>
   ggeffects::predict_response(
     terms = c("bill_length_mm", "bill_depth_mm")
@@ -1415,9 +1467,12 @@ Relationship between `flipper_length_mm` and `bill_length_mm`, with data points 
 
 ### Posterior predictive checks
 
-Posterior predictive checks are a technique used in Bayesian statistics to assess the fit of a model by comparing observed data to data simulated from the [posterior predictive distribution](https://en.wikipedia.org/wiki/Posterior_predictive_distribution). The model-predicted lines should resemble the observed data line.
+Posterior predictive checks are a Bayesian technique used to assess model fit by comparing observed data to data simulated from the [posterior predictive distribution](https://en.wikipedia.org/wiki/Posterior_predictive_distribution) (i.e., the distribution of potential unobserved values given the observed data). These checks help identify systematic discrepancies between the observed and simulated data, providing insight into whether the chosen model (or distributional family) is appropriate. Ideally, the model-predicted lines should closely match the observed data patterns.
 
+::: {#fig-model-fit-comparison-5}
 ```{r}
+#| code-fold: true
+
 diag_sum_plots <- 
   fit_engine_2 |> 
   performance::check_model(
@@ -1425,7 +1480,7 @@ diag_sum_plots <-
     colors = c("red", "black", "black")
   ) |>
   plot() |>
-  rutils:::shush()
+  rutils::shush()
 
 diag_sum_plots$PP_CHECK +
   ggplot2::labs(
@@ -1436,16 +1491,25 @@ diag_sum_plots$PP_CHECK +
   ggplot2::theme_gray()
 ```
 
+Posterior predictive checks for the model. The red line represents the observed data, while the black lines represent the model-predicted data.
+:::
+
 ## Performing model diagnostics
+
+::: {.callout-warning}
+Before using objective assumption tests (e.g., Anderson–Darling test), it's important to note that they may be not advisable in some contexts. In larger samples, these tests can be overly sensitive to minor deviations, while in smaller samples, they may not detect significant deviations. Additionally, they might overlook visual patterns that are not captured by a single metric. Therefore, visual assessment of diagnostic plots may be a better way [@shatz2024; @kozak2018; @schucany2006]. For a straightforward critique of normality tests specifically, refer to [this](https://towardsdatascience.com/stop-testing-for-normality-dba96bb73f90) article by @greener2020.
+:::
 
 ### Normality
 
 **Assumption 2** is satisfied, as the residuals shown a normal distribution in 11 types of normality tests with different approaches (e.g., moments, regression/correlations; ECDFs).
 
-### Visual inspection
+#### Visual inspection
 
 ::: {#fig-model-residual-diag-normality-1}
 ```{r}
+#| code-fold: true
+
 fit_engine |>
   stats::residuals() |>
   test_normality(name = "Residuals")
@@ -1456,6 +1520,8 @@ Histogram of the model residuals with a kernel density estimate, along with a qu
 
 ::: {#fig-model-residual-diag-normality-2}
 ```{r}
+#| code-fold: true
+
 fit |> 
   broom::augment(data) |>
   dplyr::select(.resid) |>
@@ -1485,6 +1551,8 @@ Boxplot of model residuals with outliers highlighted in red and other residuals 
 
 ::: {#tbl-model-residual-diag-normality-1}
 ```{r}
+#| code-fold: true
+
 fit_engine |>
   stats::residuals() |>
   stats_sum(name = "Residuals")
@@ -1493,11 +1561,11 @@ fit_engine |>
 Summary statistics of model residuals.
 :::
 
-### Tests
+#### Tests
 
 It's important to note that the Kolmogorov-Smirnov and Pearson chi-square tests are included here just for reference, as many authors don't recommend using them when testing for normality [@dagostino1990]. Learn more about normality tests in @thode2002.
 
-We also recommend checking the original papers for each test to understand their assumptions and limitations:
+I also recommend checking the original papers for each test to understand their assumptions and limitations:
 
 - [Anderson-Darling test](https://en.wikipedia.org/wiki/Anderson%E2%80%93Darling_test): @anderson1952; @anderson1954.
 - Bonett-Seier test: @bonett2002.
@@ -1518,6 +1586,8 @@ $$
 
 ::: {#tbl-model-residual-diag-normality-2}
 ```{r}
+#| code-fold: true
+
 fit_engine |>
   stats::residuals() |>
   normality_sum()
@@ -1540,6 +1610,8 @@ fit_engine |> olsrr::ols_test_correlation()
 
 ::: {#fig-model-residual-diag-fitted-values-1}
 ```{r}
+#| code-fold: true
+
 fit |>
   broom::augment(data) |>
   ggplot2::ggplot(ggplot2::aes(.pred, .resid)) +
@@ -1559,6 +1631,8 @@ Residual plot showing the relationship between fitted values and residuals, with
 
 ::: {#fig-model-residual-diag-linearity-1}
 ```{r}
+#| code-fold: true
+
 plots <- fit_engine |> olsrr::ols_plot_resid_fit_spread(print_plot = FALSE)
 
 for (i in seq_along(plots)) {
@@ -1577,7 +1651,7 @@ cowplot::plot_grid(plots$fm_plot, plots$rsd_plot, ncol = 2, nrow = 1)
 Residual fit spread plots to detect non-linearity, influential observations, and outliers. The side-by-side plots show the centered fit and residuals, illustrating the variation explained by the model and what remains in the residuals. Inappropriately specified models often exhibit greater spread in the residuals than in the centered fit. "Proportion Less" indicates the cumulative distribution function, representing the proportion of observations below a specific value, facilitating an assessment of model performance.
 :::
 
-[Ramsey's RESET test](https://en.wikipedia.org/wiki/Ramsey_RESET_test) indicates that the model may has no omitted variables. This test examines whether non-linear combinations of the fitted values can explain the response variable.
+The [Ramsey's RESET test](https://en.wikipedia.org/wiki/Ramsey_RESET_test) indicates that the model has no omitted variables. This test examines whether non-linear combinations of the fitted values can explain the response variable.
 
 Learn more about the Ramsey's RESET test in: @ramsey1969.
 
@@ -1604,8 +1678,18 @@ When comparing the  standardized residuals ($\sqrt{|\text{Standardized Residuals
 
 #### Visual inspection
 
+```{r}
+#| eval: false
+#| include: false
+
+# Based on:
+# https://sscc.wisc.edu/sscc/pubs/RegDiag-R/homoscedasticity.html#:~:text=We%20must%20plot%20the%20residuals%20against%20the%20fitted%20values%20and%20against%20each%20of%20the%20predictors.
+```
+
 ::: {#fig-model-diag-homoscedasticity-1}
 ```{r}
+#| code-fold: true
+
 fit |>
   stats::predict(data) |>
   dplyr::mutate(
@@ -1629,6 +1713,8 @@ Relation between the fitted values of the model and its standardized residuals.
 
 ::: {#fig-model-diag-homoscedasticity-2}
 ```{r}
+#| code-fold: true
+
 fit |>
   stats::predict(data) |>
   dplyr::mutate(
@@ -1653,6 +1739,8 @@ Relation between `bill_length_mm` and the model standardized residuals.
 
 ::: {#fig-model-diag-homoscedasticity-3}
 ```{r}
+#| code-fold: true
+
 fit |>
   stats::predict(data) |>
   dplyr::mutate(
@@ -1679,8 +1767,6 @@ Relation between `bill_depth_mm` and the model standardized residuals.
 
 The [Breusch-Pagan test](https://en.wikipedia.org/wiki/Breusch%E2%80%93Pagan_test) test indicates that the residuals exhibit constant variance.
 
-As we can see below, the result of the test is not significant, suggesting that the residuals have a constant variance.
-
 Learn more about the Breusch-Pagan test in: @breusch1979 and @koenker1981.
 
 $$
@@ -1704,7 +1790,7 @@ fit_engine |> lmtest::bptest(studentize = FALSE)
 ```
 
 ```{r}
-# With studentising modification of Koenker
+# Using the studentized modification of Koenker.
 fit_engine |> skedastic::breusch_pagan(koenker = TRUE)
 ```
 
@@ -1734,17 +1820,37 @@ fit_engine |> skedastic::white()
 
 ### Independence
 
-**Assumption 5** is satisfied. Although the residuals show some autocorrelation, they fall within the acceptable range of the Durbin–Watson statistic (1.5 to 2.5). It's also important to note that the observations for each predicted value are not related to any other prediction; in other words, they are not grouped or sequenced by any variable (by design) (see [@hair2019, p. 291] for more information).
+**Assumption 5** is satisfied. Although the residuals show some autocorrelation, they fall within the acceptable range of the Durbin–Watson statistic (1.5 to 2.5). It's also important to note that the observations for each predicted value are not related to any other prediction; in other words, they are not grouped or sequenced by any variable (by design) (see @hair2019[p. 291] for more information).
 
-Many authors don't consider autocorrelation tests for linear regression models, as they are more relevant for time series data. However, we include them here for reference.
+Many authors don't consider autocorrelation tests for linear regression models, as they are more relevant for time series data. However, I include them here just for reference.
 
 #### Visual inspection
 
+::: {#fig-model-diag-independence-1}
 ```{r}
+#| code-fold: true
+
 fit_engine |> 
   residuals() |>
   forecast::ggtsdisplay(lag.max=30)
 ```
+
+Time series plot of the residuals along with its AutoCorrelation Function (ACF) and Partial AutoCorrelation Function (PACF).
+:::
+
+#### Correlations
+
+@tbl-model-residual-diag-independence-1 shows the relative importance of independent variables in determining the response variable. It highlights how much each variable uniquely contributes to the R-squared value, beyond what is explained by the other predictors.
+
+::: {#tbl-model-residual-diag-independence-1}
+```{r}
+#| code-fold: true
+
+fit_engine |> olsrr::ols_correlations()
+```
+
+Correlations between the dependent variable and the independent variables, along with the zero-order, part, and partial correlations. The zero-order correlation represents the Pearson correlation coefficient between the dependent and independent variables. Part correlations indicate how much the R-squared would decrease if a specific variable were removed from the model, while partial correlations reflect the portion of variance in the response variable that is explained by a specific independent variable, beyond the influence of other predictors in the model.
+:::
 
 #### Newey-West estimator
 
@@ -1778,10 +1884,6 @@ $$
 $$
 
 ```{r}
-fit_engine |> olsrr::ols_correlations()
-```
-
-```{r}
 lmtest::dwtest(fit_engine)
 ```
 
@@ -1790,6 +1892,8 @@ car::durbinWatsonTest(fit_engine)
 ```
 
 #### Ljung-Box test
+
+The Ljung–Box test is a statistical test used to determine whether any autocorrelations within a time series are significantly different from zero. Rather than testing randomness at individual lags, it assesses the "overall" randomness across multiple lags.
 
 Learn more about the [Ljung-Box test](https://en.wikipedia.org/wiki/Ljung%E2%80%93Box_test) in: @box1970 and @ljung1978.
 
@@ -1812,15 +1916,17 @@ No high degree of colinearity was observed among the independent variables.
 
 #### Variance Inflation Factor (VIF)
 
-The [Variance Inflation Factor (VIF)](https://en.wikipedia.org/wiki/Variance_inflation_factor) indicates the effect of other independent variables on the standard error of a regression coefficient. The VIF is directly related to the tolerance value ($\text{VIF}_{i} = 1/\text{TO}L$). High VIF values (larger than ~5 [@@struck2024]) suggest significant collinearity or multicollinearity among the independent variables [@hair2019, p. 265].
+The [Variance Inflation Factor (VIF)](https://en.wikipedia.org/wiki/Variance_inflation_factor) indicates the effect of other independent variables on the standard error of a regression coefficient. The VIF is directly related to the tolerance value ($\text{VIF}_{i} = 1/\text{TO}L$). High VIF values (larger than ~5 [@struck2024]) suggest significant collinearity or multicollinearity among the independent variables [@hair2019, p. 265].
 
 ::: {#fig-model-diag-colinearity-1}
 ```{r}
+#| code-fold: true
+
 diag_sum_plots <- 
   fit_engine_2 |> 
   performance::check_model(panel = FALSE) |>
   plot() |>
-  rutils:::shush()
+  rutils::shush()
 
 diag_sum_plots$VIF + 
   ggplot2::labs(
@@ -1841,22 +1947,32 @@ Variance Inflation Factors (VIF) for each predictor variable. VIFs below 5 are c
 
 ::: {#tbl-model-residual-diag-colinearity-1}
 ```{r}
+#| code-fold: true
+
 fit_engine |> olsrr::ols_vif_tol()
 ```
 
-Variance Inflation Factors (VIF) and Tolerance values for each predictor variable.
+Variance Inflation Factors (VIF) and tolerance values for each predictor variable.
 :::
 
+::: {#tbl-model-residual-diag-colinearity-2}
 ```{r}
+#| code-fold: true
+
 fit_engine_2 |> performance::check_collinearity()
 ```
 
-### Condition Index
+Variance Inflation Factors (VIF) and tolerance values for each predictor variable.
+:::
+
+#### Condition Index
 
 The [condition index](https://en.wikipedia.org/wiki/Condition_number) is a measure of multicollinearity in a regression model. It is based on the [eigenvalues](https://en.wikipedia.org/wiki/Eigenvalues_and_eigenvectors) of the correlation matrix of the predictors. A condition index of 30 or higher is generally considered indicative of significant collinearity [@belsley2004, p. 112-114].
 
 ::: {#tbl-model-residual-diag-colinearity-2}
 ```{r}
+#| code-fold: true
+
 fit_engine |> olsrr::ols_eigen_cindex()
 ```
 
@@ -1867,21 +1983,203 @@ Condition indexes and eigenvalues for each predictor variable.
 
 In this section, we will check several measures of influence that can be used to assess the impact of individual observations on the model estimates.
 
+But first, let's define some terms:
+
 Leverage points
-: **Leverage** is a measure of the distance between individual values of a predictor and other values of the predictor. In other words, a point with high leverage has an x-value far away from the other x-values. Points with high leverage have the potential to influence our model estimates [@struck2024; @hair2019, p. 262].
+: Leverage is a measure of the distance between individual values of a predictor and other values of the predictor. In other words, a point with high leverage has an x-value far away from the other x-values. Points with high leverage have the potential to influence the model estimates [@struck2024; @hair2019, p. 262; @nahhas2024].
 
 Influence points
-: **Influence** is a measure of how much an observation affects the model estimates. If an observation with large influence were removed from the dataset, we would expect a large change in the predictive equation [@struck2024].
+: Influence is a measure of how much an observation affects the model estimates. If an observation with large influence were removed from the dataset, we would expect a large change in the predictive equation [@struck2024; @nahhas2024].
+
+#### Standardized residuals
+
+Standardized residuals are a rescaling of the residual to a common basis by dividing each residual by the standard deviation of the residuals [@hair2019, p. 264].
+
+```{r}
+fit_engine |> stats::rstandard() |> head()
+```
+::: {#fig-model-diag-influence-1}
+```{r}
+#| code-fold: true
+
+dplyr::tibble(
+  x = seq_len(nrow(data)),
+  std = stats::rstandard(fit_engine)
+) |>
+  ggplot2::ggplot(
+    ggplot2::aes(x = x, y = std, ymin = 0, ymax = std)
+  ) +
+  ggplot2::geom_linerange(color = "blue") +
+  ggplot2::geom_hline(yintercept = 2, color = "black") +
+  ggplot2::geom_hline(yintercept = -2, color = "black") +
+  ggplot2::geom_hline(yintercept = 3, color = "red") +
+  ggplot2::geom_hline(yintercept = -3, color = "red") +
+  ggplot2::scale_y_continuous(breaks = seq(-3, 3)) +
+  ggplot2::labs(
+    x = "Observation",
+    y = "Standardized residual"
+  )
+```
+
+Standardized residuals for each observation.
+:::
+
+```{r}
+#| eval: false
+#| include: false
+
+fit_engine |> olsrr::ols_plot_resid_stand()
+```
+
+#### Studentized residuals
+
+[Studentized residuals](https://en.wikipedia.org/wiki/Studentized_residual) are a commonly used variant of the standardized residual. It differs from other methods in how it calculates the standard deviation used in standardization. To minimize the effect of any observation on the standardization process, the standard deviation of the residual for observation $i$ is computed from regression estimates omitting the $i$th observation in the calculation of the regression estimates [@hair2019, p. 264].
+
+```{r}
+fit_engine |> stats::rstudent() |> head()
+```
+
+::: {#fig-model-diag-influence-2}
+```{r}
+#| code-fold: true
+
+dplyr::tibble(
+  x = seq_len(nrow(data)),
+  std = stats::rstudent(fit_engine)
+) |>
+  ggplot2::ggplot(
+    ggplot2::aes(x = x, y = std, ymin = 0, ymax = std)
+  ) +
+  ggplot2::geom_linerange(color = "blue") +
+  ggplot2::geom_hline(yintercept = 2, color = "black") +
+  ggplot2::geom_hline(yintercept = -2, color = "black") +
+  ggplot2::geom_hline(yintercept = 3, color = "red") +
+  ggplot2::geom_hline(yintercept = -3, color = "red") +
+  ggplot2::scale_y_continuous(breaks = seq(-3, 3)) +
+  ggplot2::labs(
+    x = "Observation",
+    y = "Studentized residual"
+  )
+```
+
+Studentized residuals for each observation.
+:::
+
+::: {#fig-model-diag-influence-3}
+```{r}
+#| code-fold: true
+
+fit |> 
+  broom::augment(data) |>
+  dplyr::mutate(
+    std = stats::rstudent(fit_engine)
+  ) |>
+  ggplot2::ggplot(ggplot2::aes(.pred, std)) +
+  ggplot2::geom_point(color = "blue") +
+  ggplot2::geom_hline(yintercept = 2, color = "black") +
+  ggplot2::geom_hline(yintercept = -2, color = "black") +
+  ggplot2::geom_hline(yintercept = 3, color = "red") +
+  ggplot2::geom_hline(yintercept = -3, color = "red") +
+  ggplot2::scale_y_continuous(breaks = seq(-3, 3)) +
+  ggplot2::labs(
+    x = "Predicted value",
+    y = "Studentized residual"
+  )
+```
+
+Relation between studentized residuals and fitted values.
+:::
+
+::: {#fig-model-diag-influence-4}
+```{r}
+#| code-fold: true
+
+plot <- 
+  fit_engine |> 
+  olsrr::ols_plot_resid_lev(threshold = 2, print_plot = FALSE)
+
+plot$plot +
+  ggplot2::labs(
+    title = ggplot2::element_blank(),
+    y = "Studentized residual"
+  )
+```
+
+Relation between studentized residuals and their leverage points.
+:::
+
+```{r}
+#| eval: false
+#| include: false
+
+fit_engine |> olsrr::ols_plot_resid_stud()
+```
+
+```{r}
+#| eval: false
+#| include: false
+
+fit_engine |> 
+  car::influenceIndexPlot(
+    vars = "Studentized",
+    id = FALSE,
+    main = NULL
+  )
+```
+
+```{r}
+#| eval: false
+#| include: false
+
+fit_engine |> olsrr::ols_plot_resid_stud_fit()
+```
+
+#### Hat values
+
+The hat value indicates how distinct an observation’s predictor values are from those of other observations. Observations with high hat values have high leverage and may be, though not necessarily, influential. There is no fixed threshold for what constitutes a “large” hat value; instead, the focus must be on observations with hat values significantly higher than the rest [@nahhas2024; @hair2019, p. 261].
 
 ```{r}
 fit_engine |> stats::hatvalues() |> head()
+```
+
+::: {#fig-model-diag-influence-5}
+```{r}
+#| code-fold: true
+
+dplyr::tibble(
+  x = seq_len(nrow(data)),
+  hat = stats::hatvalues(fit_engine)
+) |>
+  ggplot2::ggplot(
+    ggplot2::aes(x = x, y = hat, ymin = 0, ymax = hat)
+  ) +
+  ggplot2::geom_linerange(color = "blue") +
+  ggplot2::labs(
+    x = "Observation",
+    y = "Hat value"
+  )
+```
+
+Hat values for each observation.
+:::
+
+```{r}
+#| eval: false
+#| include: false
+
+fit_engine |> 
+  car::influenceIndexPlot(
+    vars = "hat",
+    id = FALSE,
+    main = NULL
+  )
 ```
 
 #### Cook's distance
 
 The [Cook's D](https://en.wikipedia.org/wiki/Cook%27s_distance) measures each observation's influence on the model's fitted values. It is considered one of the most representative metrics for assessing overall influence [@hair2019].
 
-A common practice is to flag observations with a Cook's distance of 1.0 or greater. However, a more conservative threshold of $4 / (n - k - 1)$, where $n$ is the sample size and $k$ is the number of independent variables, is suggested as a more conservative measure in small samples or for use with larger datasets [@hair2019].
+A common practice is to flag observations with a Cook's distance of 1.0 or greater. However, a threshold of $4 / (n - k - 1)$, where $n$ is the sample size and $k$ is the number of independent variables, is suggested as a more conservative measure in small samples or for use with larger datasets [@hair2019].
 
 Learn more about Cook's D in: @cook1977; @cook1979.
 
@@ -1889,9 +2187,15 @@ Learn more about Cook's D in: @cook1977; @cook1979.
 fit_engine |> stats::cooks.distance() |> head()
 ```
 
+::: {#fig-model-diag-influence-6}
 ```{r}
-plot <- fit_engine |> olsrr::ols_plot_cooksd_bar(print_plot = FALSE)
+#| code-fold: true
 
+plot <- 
+  fit_engine |> 
+  olsrr::ols_plot_cooksd_bar(type = 2, print_plot = FALSE)
+
+# The following procedure changes the plot aesthetics.
 q <- plot$plot + ggplot2::labs(title = ggplot2::element_blank())
 q <- q |> ggplot2::ggplot_build()
 q$data[[5]]$label <- ""
@@ -1899,8 +2203,13 @@ q$data[[5]]$label <- ""
 q |> ggplot2::ggplot_gtable() |> ggplotify::as.ggplot()
 ```
 
-::: {#fig-model-diag-influence-1}
+Cook's distance for each observation along with a threshold line at $4 / (n - k - 1)$.
+:::
+
+::: {#fig-model-diag-influence-7}
 ```{r}
+#| code-fold: true
+
 diag_sum_plots <- 
   fit_engine_2 |> 
   performance::check_model(
@@ -1908,13 +2217,15 @@ diag_sum_plots <-
     colors = c("blue", "black", "black")
   ) |>
   plot() |>
-  rutils:::shush()
+  rutils::shush()
 
 plot <- 
   diag_sum_plots$OUTLIERS +
   ggplot2::labs(
     title = ggplot2::element_blank(),
-    subtitle = ggplot2::element_blank()
+    subtitle = ggplot2::element_blank(),
+    x = "Leverage",
+    y = "Studentized residuals"
   ) +
   ggplot2::theme(
     legend.position = "right",
@@ -1926,6 +2237,7 @@ plot <-
 
 plot <- plot |> ggplot2::ggplot_build()
 
+# The following procedure changes the plot aesthetics.
 for (i in c(1:9)) {
   # "#1b6ca8" "#3aaf85"
   plot$data[[i]]$colour <- dplyr::case_when(
@@ -1939,12 +2251,33 @@ for (i in c(1:9)) {
 plot |> ggplot2::ggplot_gtable() |> ggplotify::as.ggplot()
 ```
 
-Influential observations. The blue line represents the [Cook's distance](https://en.wikipedia.org/wiki/Cook%27s_distance). Any points outside the contour lines are influential observations.
+Relation between studentized residuals and their leverage points. The blue line represents the [Cook's distance](https://en.wikipedia.org/wiki/Cook%27s_distance). Any points outside the contour lines are influential observations.
 :::
+
+```{r}
+#| eval: false
+#| include: false
+
+fit_engine |> olsrr::ols_plot_cooksd_chart()
+```
+
+```{r}
+#| eval: false
+#| include: false
+
+fit_engine |> 
+  car::influenceIndexPlot(
+    vars = "Cook",
+    id = FALSE,
+    main = NULL
+  )
+```
 
 ####  Influence on prediction (DFFITS)
 
 [DFFITS](https://en.wikipedia.org/wiki/DFFITS) (difference in fits) is a standardized measure of how much the prediction for a given observation would change if it were deleted from the model. Each observation’s DFFITS is standardized by the standard deviation of fit at that point [@struck2024].
+
+The best rule of thumb is to classify as influential any standardized values that exceed $2 \sqrt{(p / n)}$, where $p$ is the number of independent variables + 1 and $n$ is the sample size  [@hair2019, p. 261].
 
 Learn more about DDFITS in: @welsch1977 and @belsley2004.
 
@@ -1952,13 +2285,22 @@ Learn more about DDFITS in: @welsch1977 and @belsley2004.
 fit_engine |> stats::dffits() |> head()
 ```
 
+::: {#fig-model-diag-influence-8}
 ```{r}
-fit_engine |> olsrr::ols_plot_dffits()
+#| code-fold: true
+
+plot <- fit_engine |> 
+  olsrr::ols_plot_dffits(print_plot = FALSE)
+
+plot$plot + ggplot2::labs(title = ggplot2::element_blank())
 ```
+
+Standardized DFFITS (difference in fits) for each observation.
+:::
 
 ####  Influence on parameter estimates (DFBETAS)
 
-[DFBETAS](https://en.wikipedia.org/wiki/Influential_observation#:~:text=measures%20of%20influence) are standardized differences between regression coefficients in a model with a given observation, and a model without that observation. DFBETAS are standardized by the standard error of the coefficient.
+[DFBETAS](https://en.wikipedia.org/wiki/Influential_observation#:~:text=measures%20of%20influence) are a measure of the change in a regression coefficient when an observation is omitted from the regression analysis. **The value of the DFBETA is in terms of the coefficient itself** [@hair2019, p. 261]. A cutoff for what is considered a large DFBETAS value is $2 / \sqrt{n}$, where $n$ is the number of observations. [@struck2024].
 
 Learn more about DFBETAS in: @welsch1977 and @belsley2004.
 
@@ -1970,76 +2312,77 @@ fit_engine |> stats::dfbeta() |> head()
 plots <- fit_engine |> olsrr::ols_plot_dfbetas(print_plot = FALSE)
 ```
 
+::: {#fig-model-diag-influence-9}
 ```{r}
-plots$plots[[1]]
+#| code-fold: true
+
+plots$plots[[1]] + 
+  ggplot2::labs(title = "Intercept coefficient")
 ```
 
-```{r}
-plots$plots[[2]]
-```
-
-```{r}
-plots$plots[[3]]
-```
-
-```{r}
-fit_engine |> stats::dffits() |> head()
-```
-
-#### Studentized residuals
-
-```{r}
-fit_engine |> stats::rstandard() |> head()
-```
-
-```{r}
-fit_engine |> stats::rstudent() |> head()
-```
-
-[Studentized Residual Plot](https://olsrr.rsquaredacademy.com/articles/influence_measures#studentized-residual-plot)
-
-```{r}
-fit_engine |> olsrr::ols_plot_resid_stud()
-```
-
-[Standardized Residual Chart](https://olsrr.rsquaredacademy.com/articles/influence_measures#standardized-residual-chart)
-
-```{r}
-fit_engine |> olsrr::ols_plot_resid_stand()
-```
-
-
-[Studentized Residuals vs Leverage Plot](https://olsrr.rsquaredacademy.com/articles/influence_measures#standardized-residual-chart)
-
-::: {#fig-model-residual-diag-leverage}
-```{r}
-fit_engine |> olsrr::ols_plot_resid_lev()
-```
-
-Relation between the model studentized residuals and their leverage/influence points.
+Standardized DFBETAS values for each observation concerning the **intercept** coefficient.
 :::
 
-[Deleted Studentized Residual vs Fitted Values Plot](https://olsrr.rsquaredacademy.com/articles/influence_measures#standardized-residual-chart)
-
+::: {#fig-model-diag-influence-10}
 ```{r}
-fit_engine |> olsrr::ols_plot_resid_stud_fit()
+#| code-fold: true
+
+plots$plots[[2]] + 
+  ggplot2::labs(title = "bill_length_mm coefficient")
 ```
 
-#### Hadi plot
+DFBETAS values for each observation concerning the **bill_length_mm** coefficient.
+:::
 
-[Hadi Plot](https://olsrr.rsquaredacademy.com/articles/influence_measures#hadi-plot)
-
-Learn more about Hadi's influence measure in: @chatterjee2012.
-
+::: {#fig-model-diag-influence-11}
 ```{r}
-fit_engine |> olsrr::ols_plot_hadi()
+#| code-fold: true
+
+plots$plots[[3]] + 
+  ggplot2::labs(title = "bill_depth_mm coefficient")
 ```
 
-[Potential Residual Plot](https://olsrr.rsquaredacademy.com/articles/influence_measures#hadi-plot)
 
+Standardized DFBETAS values for each observation concerning the **bill_depth_mm** coefficient.
+:::
+
+#### Hadi's measure
+
+Hadi’s measure of influence is based on the idea that influential observations can occur in either the response variable, the predictors, or both.
+
+Learn more about Hadi's measure in: @chatterjee2012.
+
+::: {#fig-model-diag-influence-12}
 ```{r}
-fit_engine |> olsrr::ols_plot_resid_pot()
+#| code-fold: true
+
+plot <- 
+  fit_engine |> 
+  olsrr::ols_plot_hadi(print_plot = FALSE)
+
+plot +
+  ggplot2::labs(
+    title = ggplot2::element_blank(),
+    y = "Hadi's measure"
+  )
 ```
+
+Hadi's influence measure for each observation.
+:::
+
+::: {#fig-model-diag-influence-13}
+```{r}
+#| code-fold: true
+
+plot <- 
+  fit_engine |> 
+  olsrr::ols_plot_resid_pot(print_plot = FALSE)
+
+plot + ggplot2::labs(title = ggplot2::element_blank())
+```
+
+Potential-residual plot classifying unusual observations as high-leverage points, outliers, or a combination of both.
+:::
 
 ## Testing the hypothesis
 
@@ -2055,30 +2398,42 @@ $$
 \end{cases}
 $$
 
-Beyond a $\text{R}^{2}_{\text{adj}}$ over 0.5, predictor effects must be statistically significant, and model assumptions should be met.
+In addition to an adjusted $\text{R}^{2}$ greater than 0.5, predictors should demonstrate statistically significant associations, and the model assumptions should be satisfied.
 
-In the sections above, we have shown that the model meets the assumptions of linearity, normality, homoscedasticity, and independence. (**Model validity requirement**: True)
+In the sections above, we confirmed that the model satisfies the assumptions of linearity, normality, homoscedasticity, and independence. (**Model validity requirement**: True)
 
-The table below shows that the predictors `bill_length_mm` and `bill_depth_mm` are statistically significant in predicting `flipper_length_mm`. (**Predictor significance requirement**: True)
+@tbl-hypothesis-test-1 shows that the predictors `bill_length_mm` and `bill_depth_mm` are statistically significant in predicting `flipper_length_mm`. (**Predictor significance requirement**: True)
 
+::: {#tbl-hypothesis-test-1}
 ```{r}
+#| code-fold: true
+
 fit |> 
   broom::tidy() |>
   janitor::adorn_rounding(5)
 ```
 
-Now let's check the adjusted $R^{2}$ value to see if it is greater than 0.5. We can see in the table below that the adjusted $R^{2}$ is lower than 0.5 (`r round(broom::glance(fit)$adj.r.squared, 5)`, which means that the model does not explain more than 50% of the variance in the dependent variable. So **we must reject the alternative hypothesis in favor of the null hypothesis**. (**Adjusted R squared requirement**: False)
+Output from the model fitting process showing the estimated coefficients, standard errors, test statistics, and p-values for the terms in the linear regression model.
+:::
 
+We can see in @tbl-hypothesis-test-2 that the adjusted $\text{R}^{2}$ is lower than 0.5, which means that the model does not explain more than 50% of the variance in the dependent variable (**Adjusted R-squared requirement**: False).
+
+::: {#tbl-hypothesis-test-2}
 ```{r}
+#| code-fold: true
+
 fit |> 
   broom::glance() |> 
   tidyr::pivot_longer(cols = dplyr::everything()) |>
   janitor::adorn_rounding(10)
 ```
 
+Summary of model fit statistics showing key metrics including R-squared, adjusted R-squared, sigma, statistic, p-value, degrees of freedom, log-likelihood, AIC, BIC, and deviance.
+:::
+
+::: {#tbl-hypothesis-test-3}
 ```{r}
-# LCL = Lower Confidence Limit
-# UCL = Upper Confidence Limit
+#| code-fold: true
 
 psychometric::CI.Rsq(
   rsq = broom::glance(fit)$adj.r.squared,
@@ -2088,7 +2443,14 @@ psychometric::CI.Rsq(
 )
 ```
 
-If we would like to interpret the adjusted $R^{2}$ value in terms of effect size, we can use the following code:
+Confidence interval for the adjusted R-squared value. LCL correspond to the lower limit, and UCL to the upper limit.
+:::
+
+Therefore, **we must reject the alternative hypothesis in favor of the null hypothesis**. 
+
+### Effect size
+
+If we would like to interpret the adjusted $\text{R}^{2}$ value in terms of effect size, we can use the following code:
 
 <!-- @cohen1988 -->
 
@@ -2116,21 +2478,18 @@ Following our criteria we can now answer our question:
 
 The answer is **No**. The model does not explain more than 50% of the variance in the dependent variable, which means that the predictors `bill_length_mm` and `bill_depth_mm` are not effective in predicting `flipper_length_mm`.
 
-## Notes
+## Final remarks
 
-Before using objective assumption tests (e.g., Anderson–Darling test), it's important to note that they may be not advisable in some contexts. In larger samples, these tests can be overly sensitive to minor deviations, while in smaller samples, they may not detect significant deviations. Additionally, they might overlook visual patterns that are not captured by a single metric. Therefore, visual assessment of diagnostic plots may be a better way [@shatz2024; @kozak2018; @schucany2006]. For a straightforward critique of normality tests specifically, refer to [this](https://towardsdatascience.com/stop-testing-for-normality-dba96bb73f90) article by @greener2020.
+I hope the explanations, visualizations, and code have helped clarify General Linear Models. If you have any questions, feel free to reach out. You can find me on [GitHub](https://github.com/danielvartan).
 
-I hope you like this report. If you have any questions, please feel free to ask. You can find me on [GitHub](https://github.com/danielvartan).
+For further learning on general linear models, I recommend the following resources:
 
-## Further reading
-
-I recommend the following resources for further reading:
+- @degroot2012
+- @casella2002
 
 - @allen1997
 - @bussab1988 (pt-BR)
-- @casella2002
 - @dalpiaz
-- @degroot2012
 - @dudek2020
 - @fox2016
 - @hair2019
@@ -2138,7 +2497,7 @@ I recommend the following resources for further reading:
 - @kuhn2022
 - @struck2024
 
-I also highly recommend Josh Starmer's [StatQuest](https://www.youtube.com/@statquest) channel. The following videos are particularly helpful:
+Additionally, I highly recommend Josh Starmer’s [StatQuest](https://www.youtube.com/@statquest) and Christian Pascual's [Very Normal](https://www.youtube.com/@very-normal) YouTube channels. The following videos are especially helpful:
 
 - Starmer, J. (Nov 18, 2022). _Multiple Regression, Clearly Explained!!!_ [YouTube video]. [https://youtu.be/EkAQAi3a4js?si=MfKPGlFcYqfFAM7j](https://youtu.be/EkAQAi3a4js?si=MfKPGlFcYqfFAM7j)
 - Starmer, J. (Nov 18, 2022). _Multiple Regression in R, Step by Step!!!_ [YouTube video]. [https://youtu.be/mno47Jn4gaU?si=oba5odJm8fjeizs0](https://youtu.be/mno47Jn4gaU?si=oba5odJm8fjeizs0)

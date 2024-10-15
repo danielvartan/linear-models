@@ -7,7 +7,7 @@
 
 📈📉📊️📝🔍📐📏🎲🐧🌊❄️🧊🏝
 
-This repository contains a demonstration of [general linear models](https://en.wikipedia.org/wiki/General_linear_model), with a focus on multiple regression. It utilizes the  [`penguins`](https://allisonhorst.github.io/palmerpenguins/reference/penguins.html) dataset from the [`palmerpenguins`](https://github.com/allisonhorst/palmerpenguins/) R package, which contains measurements of penguin species from the [Palmer Archipelago](https://en.wikipedia.org/wiki/Palmer_Archipelago). The dataset was originally introduced by Gorman et al. ([2014](https://doi.org/10.1371/journal.pone.0090081)).
+This repository contains a demonstration of [general linear models](https://en.wikipedia.org/wiki/General_linear_model), with a focus on multiple regression. It utilizes the  [`penguins`](https://allisonhorst.github.io/palmerpenguins/reference/penguins.html) dataset from the [`palmerpenguins`](https://github.com/allisonhorst/palmerpenguins/) R package, which contains measurements of penguin species from the [Palmer Archipelago](https://en.wikipedia.org/wiki/Palmer_Archipelago).
 
 The report is available [here](https://danielvartan.github.io/linear-models/).
 
